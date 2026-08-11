@@ -1,0 +1,17 @@
+#define PLUGIN_API
+#define SMTG_OVERRIDE
+#define SMTG_EXPORT_SYMBOL
+#define DEFINE_INTERFACES {
+#define END_DEFINE_INTERFACES(i) }
+#define DELEGATE_REFCOUNT(i)
+#define IMPLEMENT_FUNKNOWN_METHODS(t,i,iid)
+#define DECLARE_FUNKNOWN_METHODS
+#define WRAPINTERFACE(i)
+#define WRAPINTERFACE2(i2,i1)
+#define WRAP_METHOD(mname,params,args,suffix,retval)
+#define WRAP_METHOD_TR(mname,params,args)
+#define WRAP_METHOD_INT(mname,params,args)
+#define WRAP_METHOD_PV(mname,params,args)
+#define WRAP_METHOD_PTR(mname,params,args)
+#define WRAP_METHOD_VOID(mname,params,args)
+#define BEGIN_WRAPPING
