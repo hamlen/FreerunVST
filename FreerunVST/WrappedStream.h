@@ -6,9 +6,6 @@
 #include <pluginterfaces/vst/ivstprocesscontext.h>
 #pragma warning(pop)
 
-#include <vector>
-#include <bit>
-
 using namespace Steinberg;
 using namespace Vst;
 

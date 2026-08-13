@@ -1,4 +1,6 @@
 #include <Windows.h>
+#include <shlobj.h>
+#include <shobjidl.h>
 #include "FreerunVST.h"
 
 #pragma warning(push)
@@ -23,6 +25,63 @@ SMTG_EXPORT_SYMBOL bool PLUGIN_API InitDll()
 SMTG_EXPORT_SYMBOL bool PLUGIN_API ExitDll() {
 	LOG("ExitDll called.\n");
 	return true;
+}
+
+// Try looking for a link to the sublibrary if the sublibrary isn't found.
+HMODULE load_linkto_sublibrary()
+{
+	LOG("load_linkto_sublibrary: Checking for a shortcut link named \"%ls.lnk\"...", sublibrary_name);
+	WCHAR linkname[MAX_PATH] = {};
+	memcpy(linkname, sublibrary_name, sizeof(linkname));
+	WCHAR* ext = linkname + wcslen(linkname);
+	if (ext + 4 > linkname + MAX_PATH) return NULL;
+	*ext++ = L'.';
+	*ext++ = L'l';
+	*ext++ = L'n';
+	*ext++ = L'k';
+	*ext = L'\0';
+
+	if (GetFileAttributesW(linkname) == INVALID_FILE_ATTRIBUTES)
+	{
+		LOG("load_linkto_sublibrary: No link file \"%ls\" found.", linkname);
+		return NULL;
+	}
+
+	HMODULE hResult = NULL;
+	bool needUninit = (CoInitialize(NULL) == S_OK);
+	IShellLinkW* pShellLink = nullptr;
+
+	if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLinkW, (LPVOID*)&pShellLink)) && pShellLink)
+	{
+		IPersistFile* pPersistFile = nullptr;
+		if (SUCCEEDED(pShellLink->QueryInterface(IID_IPersistFile, (void**)&pPersistFile)) && pPersistFile)
+		{
+			if (SUCCEEDED(pPersistFile->Load(linkname, STGM_READ)))
+			{
+				WCHAR targetPath[MAX_PATH];
+				WIN32_FIND_DATAW fd;
+				if (SUCCEEDED(pShellLink->GetPath(targetPath, MAX_PATH, &fd, SLGP_UNCPRIORITY)) && targetPath[0] != L'\0')
+					hResult = LoadLibraryW(targetPath);
+			}
+			else
+			{
+				LOG("load_linkto_sublibrary: IPersistFile::Load failed for \"%l\".\n", linkname);
+			}
+			pPersistFile->Release();
+		}
+		else
+		{
+			LOG("load_linkto_sublibrary: IPersistFile interface failure.\n");
+		}
+		pShellLink->Release();
+	}
+	else
+	{
+		LOG("load_linkto_sublibrary: CoCreateInstance failed.\n");
+	}
+
+	if (needUninit) CoUninitialize();
+	return hResult;
 }
 
 HMODULE load_sublibrary()
@@ -74,7 +133,10 @@ HMODULE load_sublibrary()
 		LOG("load_sublibrary: Loading \"%ls\"...\n", sublibrary_name);
 	}
 
-	return LoadLibrary(sublibrary_name);
+	HMODULE hLib = LoadLibraryW(sublibrary_name);
+	if (!hLib) hLib = load_linkto_sublibrary();
+
+	return hLib;
 }
 
 SMTG_EXPORT_SYMBOL IPluginFactory* PLUGIN_API GetPluginFactory()

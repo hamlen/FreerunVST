@@ -78,17 +78,21 @@ void log(const char* format, ...);
   PROJ1(WRAPPED_OBJECT)::mname params suffix { \
     LOG(STRINGIFY(PROJ1(WRAPPED_OBJECT)) "::" #mname " called.\n"); \
     auto r = (PROJ2(WRAPPED_OBJECT)) ? ((PROJ2(WRAPPED_OBJECT))->mname args) : (retval); \
-	LOG(STRINGIFY(PROJ1(WRAPPED_OBJECT)) "::" #mname " returning %d.\n", r); \
-	return r; \
+    LOG(STRINGIFY(PROJ1(WRAPPED_OBJECT)) "::" #mname " returning %d.\n", r); \
+    return r; \
+  }
+
+#define WRAP_METHOD_VOID(mname,params,args) \
+  PLUGIN_API PROJ1(WRAPPED_OBJECT)::mname params { \
+    LOG(STRINGIFY(PROJ1(WRAPPED_OBJECT)) "::" #mname " called.\n"); \
+    if (PROJ2(WRAPPED_OBJECT)) { (PROJ2(WRAPPED_OBJECT))->mname args; } \
+    LOG(STRINGIFY(PROJ1(WRAPPED_OBJECT)) "::" #mname "returned.\n"); \
   }
 
 #define WRAP_METHOD_TR(mname,params,args) PLUGIN_API WRAP_METHOD(mname,params,args,,kResultFalse)
 #define WRAP_METHOD_INT(mname,params,args) PLUGIN_API WRAP_METHOD(mname,params,args,,0)
 #define WRAP_METHOD_PV(mname,params,args) PLUGIN_API WRAP_METHOD(mname,params,args,,0.)
 #define WRAP_METHOD_PTR(mname,params,args) PLUGIN_API WRAP_METHOD(mname,params,args,,nullptr)
-
-#define WRAP_METHOD_VOID(mname,params,args) \
-  PLUGIN_API PROJ1(WRAPPED_OBJECT)::mname params { if (PROJ2(WRAPPED_OBJECT)) { (PROJ2(WRAPPED_OBJECT))->mname args; } }
 
 #define BEGIN_WRAPPING private: PROJ1(WRAPPED_OBJECT)* PROJ2(WRAPPED_OBJECT) = nullptr; public:
 

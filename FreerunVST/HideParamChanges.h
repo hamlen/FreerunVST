@@ -7,8 +7,6 @@
 
 #include "Main.h"
 
-#include <vector>
-
 using namespace Steinberg;
 using namespace Steinberg::Vst;
 
@@ -31,7 +29,7 @@ public:
 
 	void setSubparams(IParameterChanges* paramChanges);
 private:
-	int32 hidden_param(ParamID id) const;
+	int32 hidden_param_index(ParamID id) const;
 	bool is_hidden_index(int32 index) const;
 	int32 num_hidden_indexes_below(int32 index) const;
 	IParameterChanges* subparams = nullptr;

@@ -5,6 +5,7 @@
 
 #include "Main.h"
 #include "WrappedStream.h"
+#include <bit>
 
 using namespace Steinberg;
 using namespace Vst;
@@ -61,7 +62,7 @@ tresult PLUGIN_API WrappedStream::tell(int64* posOut)
     LOG("WrappedStream::tell called.\n");
     if (!substream) return kResultFalse;
     int64 subpos = (posOut ? *posOut : 0) + start_pos;
-    const tresult tr = substream->tell(&subpos);
+    const tresult tr = substream->tell(posOut ? &subpos : nullptr);
     if (posOut) *posOut = subpos - start_pos;
     return tr;
 }

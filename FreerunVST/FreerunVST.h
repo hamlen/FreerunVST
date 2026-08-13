@@ -60,7 +60,7 @@ class FreerunVST : public FObject,
 	public INoteExpressionController, public INoteExpressionPhysicalUIMapping, public IParameterFunctionName,
 	public IXmlRepresentationController, public IRemapParamID, public IMidiLearn2, public IMidiMapping2,
 
-	public IConnectionPoint, public IInfoListener
+	public Vst::IConnectionPoint, public IInfoListener
 {
 public:
 	FreerunVST(void) {};

@@ -10,10 +10,11 @@ To minimize overhead and maximize compatibility, *FreerunVST* implements this ne
 
 ## Installation:
 
-To install *FreerunVST*, copy the "FreerunVST64.vst3" file into the same folder as the "xxxx.vst3" file of the plugin you want to freerun, and rename "FreerunVST64.vst3" to "Freerun-xxxx.vst3", where "xxxx.vst3" is the exact file name of the plugin you want to freerun.  For example, if you have a plugin named "Cool Instrument.vst3" in your VST3 folder, rename "FreerunVST64.vst3" to "Freerun-Cool Instrument.vst3" and put it in the same folder as "Cool Instrument.vst3".
+To install *FreerunVST*, copy the "FreerunVST64.vst3" file into the same folder as the "xxxx.vst3" file of the plugin you want to freerun, and rename "FreerunVST64.vst3" to "Freerun-xxxx.vst3", where "xxxx.vst3" is the exact file name of the plugin you want to freerun.  For example, if you have a plugin named "Cool Instrument.vst3" in your VST3 folder, rename "FreerunVST64.vst3" to "Freerun-Cool Instrument.vst3" and put it in the same folder as "Cool Instrument.vst3".  (Or make a shortcut named "xxxx.vst3" to your plugin, and put the shortcut in the same folder as "Freerun-xxxx.vst3".)
 
 When your host next scans for plugins, *FreerunVST* will look at its own filename and become a plugin named "PluginName (FR)" where "PluginName" is the name reported by your "xxxx.vst3" plugin. Loading "PluginName (FR)" from your host's plugin list will load a freerunnable instance of the "PluginName" plugin. To freerun multiple plugins, just make multiple copies of "FreerunVST64.vst3", each named "Freerun-xxxx.vst3", "Freerun-yyyy.vst3", etc.  Remember that each copy must be located in the same folder (respectively) as "xxxx.vst3", "yyyy.vst3", etc.
 
 ### Change History
 
 * v1.0 - initial release
+* v1.1 - support loading plugins via shortcuts

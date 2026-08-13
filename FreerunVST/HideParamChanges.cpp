@@ -9,7 +9,7 @@
 using namespace Steinberg;
 using namespace Steinberg::Vst;
 
-int32 HideParamChanges::hidden_param(ParamID id) const
+int32 HideParamChanges::hidden_param_index(ParamID id) const
 {
 	if (!paramTags) return -1;
 	for (int32 i = 0; i < num_freerun_params; ++i)
@@ -20,16 +20,16 @@ int32 HideParamChanges::hidden_param(ParamID id) const
 bool HideParamChanges::is_hidden_index(int32 index) const
 {
 	if (index < 0) return false;
-	for (int32 i = 0; i < num_freerun_params; ++i)
-		if (hiddenIndexes[i] == index) return true;
+	for (int32 i : hiddenIndexes)
+		if (i == index) return true;
 	return false;
 }
 
 int32 HideParamChanges::num_hidden_indexes_below(int32 index) const
 {
 	int32 count = 0;
-	for (int32 i = 0; i < num_freerun_params; ++i)
-		if ((hiddenIndexes[i] >= 0) && (hiddenIndexes[i] < index))
+	for (int32 i : hiddenIndexes)
+		if ((i >= 0) && (i < index))
 			++count;
 	return count;
 }
@@ -44,7 +44,7 @@ void HideParamChanges::setSubparams(IParameterChanges* paramChanges)
 		if (IParamValueQueue* q = subparams->getParameterData(i))
 		{
 			const ParamID id = q->getParameterId();
-			const int32 j = hidden_param(id);
+			const int32 j = hidden_param_index(id);
 			if ((j >= 0) && (j < num_freerun_params))
 				hiddenIndexes[j] = i;
 		}
@@ -67,7 +67,7 @@ IParamValueQueue* PLUGIN_API HideParamChanges::getParameterData(int32 index)
 IParamValueQueue* PLUGIN_API HideParamChanges::addParameterData(const ParamID& id, int32& index)
 {
 	if (!subparams) return nullptr;
-	if (hidden_param(id) >= 0)
+	if (hidden_param_index(id) >= 0)
 	{
 		// The wrapped plugin is trying to change/add an undeclared param with one of our reserved ids.
 		// This is a violation of the VST API protocol, since plugins may not dynamically add new params,
